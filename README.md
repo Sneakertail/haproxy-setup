@@ -72,6 +72,30 @@ kubectl get crds
 kubectl get all -n kgateway-system 
 ```
 
+gateway.yaml
+```yaml
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: kgateway
+  namespace: kgateway-system
+spec:
+  gatewayClassName: kgateway
+  listeners:
+  - name: http
+    protocol: HTTP
+    port: 80
+    allowedRoutes:
+      namespaces:
+        from: All
+  - name: https
+    protocol: HTTPS
+    port: 443
+    allowedRoutes:
+      namespaces:
+        from: All
+```
+
 ```sh
 sudo apt update
 sudo apt install -y certbot
