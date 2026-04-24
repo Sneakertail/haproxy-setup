@@ -13,6 +13,43 @@
 ```sh
 kubectl create namespace argocd
 kubectl apply -n argocd --server-side --force-conflicts -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+
+kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "NodePort"}}'
+
+#CLI
+#curl -sSL -o argocd-linux-amd64 https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
+#sudo install -m 555 argocd-linux-amd64 /usr/local/bin/argocd
+#rm argocd-linux-amd64
+
+#Login
+argocd admin initial-password -n argocd
+argocd login <IP:PORT> --username admin --password <initial-password> --insecure
+argocd account update-password
+
+kubectl config get-contexts -o name
+argocd cluster add <CONTEXT>
+argocd cluster list
+```
+
+```yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: my-app
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: 'https://github.com/Sneakertail/sneakertail-charts.git'
+    targetRevision: dev
+    path: infra
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: dev
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
 ```
 
 ## Kgateway
