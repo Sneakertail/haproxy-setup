@@ -94,7 +94,9 @@ spec:
         from: All
 ```
 
-```sh
+## HA Proxy
+
+0```sh
 sudo apt update
 sudo apt install -y certbot
 
@@ -127,6 +129,10 @@ backend kgateway_https_back
     balance roundrobin
     server worker1 172.31.0.178:32767 check
     server worker2 172.31.0.231:32767 check
+```
+
+```sh
+sudo systemctl restart haproxy
 ```
 
 ```sh
