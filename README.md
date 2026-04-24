@@ -140,6 +140,34 @@ sudo systemctl restart haproxy
 ```sh
 helm repo add headlamp https://kubernetes-sigs.github.io/headlamp/
 helm install my-headlamp headlamp/headlamp --namespace kube-system
+---
+root@ip-172-31-0-49:/home/ubuntu/infra# kubectl get all -A | grep headlamp
+kube-system       pod/my-headlamp-69f8584f88-2tqtk                        1/1     Running   0          2m39s
+kube-system       service/my-headlamp                               ClusterIP      10.102.139.64    <none>        80/TCP                       2m39s
+kube-system       deployment.apps/my-headlamp                        1/1     1            1           2m39s
+kube-system       replicaset.apps/my-headlamp-69f8584f88                        1         1         1       2m39s
+```
+
+```yaml
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: headlamp-route
+  namespace: kube-system
+spec:
+  parentRefs:
+  - name: my-gateway        # <-- change to your Gateway name
+    namespace: default      # <-- change if your Gateway is in another namespace
+  hostnames:
+  - "headlamp.yourdomain.com"   # <-- optional (use if you have DNS)
+  rules:
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /
+    backendRefs:
+    - name: my-headlamp
+      port: 80
 ```
 
 ## NFS Server
