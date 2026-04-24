@@ -135,6 +135,15 @@ backend kgateway_https_back
 sudo systemctl restart haproxy
 ```
 
+## HeadLamp
+
+```sh
+helm repo add headlamp https://kubernetes-sigs.github.io/headlamp/
+helm install my-headlamp headlamp/headlamp --namespace kube-system
+```
+
+## NFS Server
+
 ```sh
 apt install nfs-kernel-server -y
 mkdir -p /var/nfs/team3
