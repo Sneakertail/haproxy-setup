@@ -3,9 +3,10 @@
 ## sneakertail.online
 
 - Add DNS Record to godaddy
-|Type|Name|Value|
-|---|---|---|
-|A|@|<PUBLIC_IP_OF_HAPROXY_EC2>|
+- 
+| Type | Name | Value |
+| --- | --- | --- |
+| A | @ | <PUBLIC_IP_OF_HAPROXY_EC2> |
 
 ```sh
 sudo apt update
