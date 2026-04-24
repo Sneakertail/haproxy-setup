@@ -55,16 +55,14 @@ spec:
 ## Kgateway
 
 ```sh
-# Control plane
-snap install helm --classic
-
-kubectl apply -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.4.0/standard-install.yaml 
+kubectl apply -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.4.0/standard-install.yaml
 
 helm upgrade -i --create-namespace \
   --namespace kgateway-system \
-  --version v2.2.1 kgateway-crds oci://cr.kgateway.dev/kgateway-dev/charts/kgateway-crds 
+  --version v2.3.0-main kgateway-crds oci://cr.kgateway.dev/kgateway-dev/charts/kgateway-crds
 
-helm upgrade -i -n kgateway-system kgateway oci://cr.kgateway.dev/kgateway-dev/charts/kgateway --version v2.2.1 
+helm upgrade -i -n kgateway-system kgateway oci://cr.kgateway.dev/kgateway-dev/charts/kgateway \
+--version v2.3.0-main
 
 kubectl get pods -n kgateway-system 
 kubectl get gatewayclass kgateway 
@@ -108,13 +106,27 @@ sudo vi /etc/haproxy/haproxy.cfg
 ```
 
 ```sh
-frontend http_frontend
-        bind *:80
-        default_backend worker_nodes
-backend worker_nodes
-        balance roundrobin
-        server s1 172.31.1.91:xxxx check
-        server s2 172.31.1.128:xxxx check
+frontend http_front
+    bind *:80
+    mode http
+    default_backend kgateway_http_back
+
+frontend https_front
+    bind *:443
+    mode tcp
+    default_backend kgateway_https_back
+
+backend kgateway_http_back
+    mode http
+    balance roundrobin
+    server worker1 172.31.0.178:31828 check
+    server worker2 172.31.0.231:31828 check
+
+backend kgateway_https_back
+    mode tcp
+    balance roundrobin
+    server worker1 172.31.0.178:32767 check
+    server worker2 172.31.0.231:32767 check
 ```
 
 ```sh
