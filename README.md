@@ -1,8 +1,15 @@
-# HA Proxy setup
+# Network Setup
+
+## sneakertail.online
+
+- Add DNS Record to godaddy
+|Type|Name|Value|
+|---|---|---|
+|A|@|<PUBLIC_IP_OF_HAPROXY_EC2>|
 
 ```sh
-apt update
-apt install haproxy -y
+sudo apt update
+sudo apt install haproxy -y
 sudo vi /etc/haproxy/haproxy.cfg
 ```
 
