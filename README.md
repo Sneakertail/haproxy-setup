@@ -14,14 +14,16 @@
 kubectl create namespace argocd
 kubectl apply -n argocd --server-side --force-conflicts -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
 
-kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "NodePort"}}'
+# Tell ArgoCD to stop forcing HTTPS and run in "insecure" mode. we have a proxy (KGateway) sitting in front of it that will handle our TLS certificates.
+kubectl patch configmap argocd-cmd-params-cm -n argocd -p '{"data": {"server.insecure": "true"}}'
+kubectl rollout restart deployment argocd-server -n argocd
 
-#CLI
+# CLI
 #curl -sSL -o argocd-linux-amd64 https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
 #sudo install -m 555 argocd-linux-amd64 /usr/local/bin/argocd
 #rm argocd-linux-amd64
 
-#Login
+# Login
 argocd admin initial-password -n argocd
 argocd login <IP:PORT> --username admin --password <initial-password> --insecure
 argocd account update-password
