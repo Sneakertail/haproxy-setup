@@ -25,6 +25,7 @@ kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "NodePort"}}'
 argocd admin initial-password -n argocd
 argocd login <IP:PORT> --username admin --password <initial-password> --insecure
 argocd account update-password
+# argocd123
 
 kubectl config get-contexts -o name
 argocd cluster add <CONTEXT>
@@ -100,7 +101,7 @@ spec:
 sudo apt update
 sudo apt install -y certbot
 
-# Create Cert
+## Create Cert
 sudo certbot certonly --standalone -d sneakertail.online -d www.sneakertail.online
 
 sudo apt install haproxy -y
