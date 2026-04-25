@@ -18,6 +18,15 @@ kubectl apply -n argocd --server-side --force-conflicts -f https://raw.githubuse
 kubectl patch configmap argocd-cmd-params-cm -n argocd -p '{"data": {"server.insecure": "true"}}'
 kubectl rollout restart deployment argocd-server -n argocd
 
+OR
+
+kubectl edit deployment argocd-server -n argocd
+containers:
+- name: argocd-server
+  args:
+  - --insecure
+
+
 # CLI
 #curl -sSL -o argocd-linux-amd64 https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
 #sudo install -m 555 argocd-linux-amd64 /usr/local/bin/argocd
