@@ -193,14 +193,17 @@ kubectl create token headlamp-admin -n kube-system
 ## NFS Server
 
 ```sh
-apt install nfs-kernel-server -y
-mkdir -p /var/nfs/team3
-chown -R nobody:nogroup /var/nfs/team3
-chown -R 777 /var/nfs/team3
+sudo apt update
+sudo apt install nfs-kernel-server -y
+
+mkdir -p /var/nfs
+chown -R nobody:nogroup /var/nfs
+chown -R 777 /var/nfs
+
 vi /etc/exports
-/var/nfs/team3  *(rw,sync,no_subtree_check,no_root_squash)
-sudo exportfs -a
-systemctl restart nfs-kernel-server
-sudo exportfs -v
+/var/nfs  *(rw,sync,no_subtree_check,no_root_squash)
+sudo exportfs -rav
+sudo systemctl restart nfs-kernel-server
+
 /var/nfs/team3  <world>(sync,wdelay,hide,no_subtree_check,sec=sys,rw,secure,no_root_squash,no_all_squash)
 ```
