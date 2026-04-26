@@ -206,6 +206,30 @@ backend kgateway_http_back
 sudo haproxy -c -f /etc/haproxy/haproxy.cfg
 sudo systemctl reload haproxy
 
+----------------------------
+
+----------------------------
+sudo certbot certonly --manual --preferred-challenges dns -d sneakertail.online -d "*.sneakertail.online"
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+Please deploy a DNS TXT record under the name:
+
+_acme-challenge.sneakertail.online.
+
+with the following value:
+
+SkJ2YXpnqC5cdji7fGnfUuqSVod6WArE3MgC_6-Znk0
+
+Before continuing, verify the TXT record has been deployed. Depending on the DNS
+provider, this may take some time, from a few seconds to multiple minutes. You can
+check if it has finished deploying with aid of online tools, such as the Google
+Admin Toolbox: https://toolbox.googleapps.com/apps/dig/#TXT/_acme-challenge.sneakertail.online.
+Look for one or more bolded line(s) below the line ';ANSWER'. It should show the
+value(s) you've just added.
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+sudo bash -c 'cat /etc/letsencrypt/live/sneakertail.online-0001/fullchain.pem /etc/letsencrypt/live/sneakertail.online-0001/privkey.pem > /etc/ssl/private/sneakertail.pem'
+sudo systemctl reload haproxy
+
 ```
 
 ## HeadLamp
