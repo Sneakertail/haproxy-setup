@@ -61,4 +61,7 @@ sudo systemctl enable sonarqube
 sudo systemctl start sonarqube
 
 sudo systemctl status sonarqube
+
+# ip:9000
+# admin - sonar123
 ```
