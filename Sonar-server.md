@@ -4,12 +4,15 @@
 
 ```sh
 sudo apt update
-sudo apt install -y openjdk-17-jdk unzip wget
+sudo apt install -y openjdk-21-jdk
+
+readlink -f $(which java)
+# /usr/lib/jvm/java-21-openjdk-amd64/bin/java
 
 # Optional: Set JAVA_HOME explicitly
 sudo nano /etc/profile.d/java.sh
 ---
-export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+export JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64
 export PATH=$JAVA_HOME/bin:$PATH
 ---
 source /etc/profile.d/java.sh
@@ -24,11 +27,13 @@ sudo sysctl -p
 cd /opt
 sudo wget https://binaries.sonarsource.com/Distribution/sonarqube/sonarqube-10.4.1.88267.zip
 
+apt install zip
+
 sudo unzip sonarqube-*.zip
 sudo mv sonarqube-*/ sonarqube
 sudo rm sonarqube-*.zip
 
-sudo useradd -r -M -d /opt/sonarqube -s /bin/bash sonar
+sudo useradd -r -m sonar
 sudo chown -R sonar:sonar /opt/sonarqube
 
 sudo nano /etc/systemd/system/sonarqube.service
