@@ -108,13 +108,7 @@ spec:
 
 ## HA Proxy
 
-0```sh
-sudo apt update
-sudo apt install -y certbot
-
-## Create Cert
-sudo certbot certonly --standalone -d sneakertail.online -d www.sneakertail.online
-
+```
 sudo apt install haproxy -y
 sudo vi /etc/haproxy/haproxy.cfg
 ```
@@ -127,7 +121,7 @@ frontend http_front
 
 frontend https_front
     bind *:443
-    mode tcp
+    mode tcp 
     default_backend kgateway_https_back
 
 backend kgateway_http_back
@@ -145,6 +139,73 @@ backend kgateway_https_back
 
 ```sh
 sudo systemctl restart haproxy
+```
+
+## Create Cert
+
+```sh
+# Getting a Real Certificate via Let's Encrypt
+sudo apt update
+sudo apt install certbot
+
+sudo systemctl stop haproxy
+sudo certbot certonly --standalone -d sneakertail.online -d www.sneakertail.online
+sudo systemctl start haproxy
+
+
+---
+root@ip-172-31-0-82:/home/ubuntu# dig +short sneakertail.online
+65.1.191.5
+root@ip-172-31-0-82:/home/ubuntu# sudo systemctl stop haproxy
+root@ip-172-31-0-82:/home/ubuntu# sudo certbot certonly --standalone -d sneakertail.online -d www.sneakertail.online
+Saving debug log to /var/log/letsencrypt/letsencrypt.log
+Requesting a certificate for sneakertail.online and www.sneakertail.online
+
+Successfully received certificate.
+Certificate is saved at: /etc/letsencrypt/live/sneakertail.online/fullchain.pem
+Key is saved at:         /etc/letsencrypt/live/sneakertail.online/privkey.pem
+This certificate expires on 2026-07-25.
+These files will be updated when the certificate renews.
+Certbot has set up a scheduled task to automatically renew this certificate in the background.
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+If you like Certbot, please consider supporting our work by:
+ * Donating to ISRG / Let's Encrypt:   https://letsencrypt.org/donate
+ * Donating to EFF:                    https://eff.org/donate-le
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+root@ip-172-31-0-82:/home/ubuntu# sudo systemctl start haproxy
+---
+
+
+sudo bash -c 'cat /etc/letsencrypt/live/sneakertail.online/fullchain.pem /etc/letsencrypt/live/sneakertail.online/privkey.pem > /etc/ssl/private/sneakertail.pem'
+sudo chmod 600 /etc/ssl/private/sneakertail.pem
+sudo nano /etc/haproxy/haproxy.cfg
+
+---
+frontend http_front
+    bind *:80
+    mode http
+    http-request redirect scheme https unless { ssl_fc }
+
+frontend https_front
+    bind *:443 ssl crt /etc/ssl/private/sneakertail.pem
+    mode http
+    
+    option forwardfor
+    http-request add-header X-Forwarded-Proto https
+    
+    default_backend kgateway_http_back
+
+backend kgateway_http_back
+    mode http
+    balance roundrobin
+    server worker1 172.31.0.178:31828 check
+    server worker2 172.31.0.231:31828 check
+---
+
+sudo haproxy -c -f /etc/haproxy/haproxy.cfg
+sudo systemctl reload haproxy
+
 ```
 
 ## HeadLamp
