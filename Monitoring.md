@@ -36,5 +36,6 @@ helm install grafana grafana/grafana \
 
 kubectl get secret --namespace monitoring grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
 # c4tuJe6uDHX1jA4ezAO8XPxdbjKf92SjerkRuid9
+
+helm upgrade loki grafana/loki -n monitoring --set loki.auth_enabled=false --reuse-values
 ```
-  ```
